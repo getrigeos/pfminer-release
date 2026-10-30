@@ -15,7 +15,7 @@ pfminer 是 PF 池（[pearlfortune.org](https://pearlfortune.org/)）官方 mine
 ## 不会做什么
 
 - 不替代正式版。在 PF 池挖 PRL，用正式版 [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) 即可，不需要 pre-release 版本，除非 pre-release 版本里有你需要的特性。
-- 不提供源码。这里只发布二进制、校验文件和签名公钥。
+- 不保证所有实验功能都运行正常。请进行充分的验证后，再进行大规模部署。
 - 不保证实验性功能长期保留。后续版本可能调整或移除。
 
 ## 属于谁

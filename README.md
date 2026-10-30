@@ -15,7 +15,7 @@ pfminer is the pre-release repository of the official miner of PF Pool ([pearlfo
 ## What it does not do
 
 - It does not replace the official release. To mine PRL on PF Pool, use the official [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner). You do not need a pre-release unless it has a feature you need.
-- It does not provide source code. Only binaries, checksums and the signing key are published here.
+- It does not guarantee that every experimental feature works correctly. Verify thoroughly before deploying at scale.
 - It does not promise that experimental features stay. Later releases may change or remove them.
 
 ## Who it belongs to
