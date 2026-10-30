@@ -9,8 +9,9 @@ pfminer is the pre-release repository of the official miner of PF Pool ([pearlfo
 ## What this repository does
 
 - Publishes pre-release builds of the miner, each matching an official version.
-- Adds experimental features here before they reach the official release.
+- Adds experimental features.
 - May add support for new coins sooner.
+- Experimental features may stay in this pre-release repository for a long time and are not necessarily brought into the next official release. Think of a pre-release as the official release with the same first three version numbers plus experimental features (for example, v2.3.6.1 = official v2.3.6 + experimental features).
 
 ## What it does not do
 
