@@ -1,0 +1,21 @@
+{
+    "name": "pfminer-kryptex",
+    "isFavorite": false,
+    "items": [
+        {
+            "coin": "pearl",
+            "pool_ssl": false,
+            "dpool_ssl": false,
+            "miner": "custom",
+            "miner_alt": "pfminer",
+            "miner_config": {
+                "url": "prl-hk.kryptex.network:8048",
+                "miner": "pfminer",
+                "template": "%WAL%",
+                "install_url": "https://github.com/getrigeos/pfminer-release/releases/download/v2.3.6.1/pfminer-2.3.6.1.tar.gz",
+                "user_config": ""
+            },
+            "pool_geo": []
+        }
+    ]
+}

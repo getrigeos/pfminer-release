@@ -2,40 +2,32 @@
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
-**pfminer** 是 Pearl（PRL）GPU 矿工的发行版本，基于上游 pearl-miner 源码构建，增加了矿工抽水。本仓库只存放发布说明、下载文件和签名公钥，**不含任何源码**。
+## 简介
 
-> pfminer **不是 PearlFortune 官方发布**。官方矿工见 [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner)。
+pfminer 是 PF 池（[pearlfortune.org](https://pearlfortune.org/)）官方 miner 的 pre-release 仓库。这里的每个版本都对应一个官方正式版，例如 v2.3.6.1 对应官方 v2.3.6。
 
-## 矿工抽水
+## 这个仓库会做什么
 
-- 在 **PF Pool** 挖矿：**0%**。
-- 在其它任何矿池挖矿（含 **K 池 / Kryptex**）：费率以各版本发布说明为准，例如 v2.3.6.1 为 **1.5%**。
+- 发布与官方版本对应的 miner 预发布（pre-release）版本。
+- 加入一些实验性功能，在进入正式版之前先在这里提供。
+- 可能更及时地加入新挖矿币种的支持。
 
-费率由根钥签名的策略决定，矿机在线刷新；抽水在该策略指定的抽水池上分短时窗口进行。
+## 不会做什么
 
-## 安装（HiveOS / RigeOS 自定义矿工）
+- 不替代正式版。在 PF 池挖 PRL，用正式版 [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) 即可，不需要 pre-release 版本，除非 pre-release 版本里有你需要的特性。
+- 不提供源码。这里只发布二进制、校验文件和签名公钥。
+- 不保证实验性功能长期保留。后续版本可能调整或移除。
 
-自定义矿工安装地址填对应版本的包地址，矿工名为 `pfminer`：
+## 属于谁
 
-```
-https://github.com/getrigeos/pfminer-release/releases/download/v<版本>/pfminer-<版本>.tar.gz
-```
+本仓库是 PF 池官方 miner 的 pre-release 渠道，与正式版仓库 [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) 的版本一一对应。
 
-包内有 `miner-cuda12` 与 `miner-cuda13`，启动时按驱动与系统 glibc 自动选择。
+## Changelog
 
-参数写法与官方矿工相同，例如 `--proxy global.pearlfortune.org:443`。在 K 池挖矿时写 K 池地址，例如 `--proxy prl-hk.kryptex.network:8048`。
+- **v2.3.6.1**：支持 K 池挖矿，抽水 1.5%；PF 池也可以使用此版本，抽水 0%。
 
-## 内测版
+## 链接
 
-标为 **Pre-release** 的版本是内测版，仅供参与内测的矿场使用。
-
-## 校验下载
-
-每个版本都附带 `SHA256SUMS`、它的签名 `SHA256SUMS.sig`、签名公钥和构建清单 `RELEASE-MANIFEST.json`：
-
-```sh
-sha256sum -c SHA256SUMS --ignore-missing
-openssl dgst -sha256 -verify KEYS/pfminer-fee-release-public.pem -signature SHA256SUMS.sig SHA256SUMS
-```
-
-各版本附带的公钥必须与 [`KEYS/pfminer-fee-release-public.pem`](./KEYS/pfminer-fee-release-public.pem) 相同。
+- PF 池：[pearlfortune.org](https://pearlfortune.org/)
+- 正式版 miner 仓库：[pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner)
+- 飞行表（HiveOS，点击打开后复制 JSON 导入）：[PF 池](./flightsheets/pfminer-pf-pool.json) · [K 池](./flightsheets/pfminer-k-pool.json)
