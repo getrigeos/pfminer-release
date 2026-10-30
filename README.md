@@ -1,4 +1,4 @@
-# pfminer
+# pfminer (pre-release repository)
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
@@ -25,6 +25,7 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 
 ## Changelog
 
+- **v2.3.7.1**: Matches the official v2.3.7. Supports mining on K Pool (Kryptex) with a 1.5% miner fee; 0% on PF Pool. Fee pools are chosen by proximity and latency (the nearest one is used once it passes), and the user's hashrate never idles unless every fee path has failed.
 - **v2.3.6.1**: Supports mining on K Pool (Kryptex) with a 1.5% miner fee. Also works on PF Pool, with a 0% miner fee.
 
 ## Links

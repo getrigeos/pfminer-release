@@ -1,4 +1,4 @@
-# pfminer
+# pfminer（pre-release 仓库）
 
 [English](./README.md) | [简体中文](./README.zh-CN.md)
 
@@ -25,6 +25,7 @@ pfminer 是 PF 池（[pearlfortune.org](https://pearlfortune.org/)）官方 mine
 
 ## Changelog
 
+- **v2.3.7.1**：对应官方 v2.3.7；支持 K 池挖矿，抽水 1.5%，PF 池 0%。抽水池按就近和延迟选择（就近端点达到及格即使用），抽水路径没有全部失败前绝不让用户算力空转。
 - **v2.3.6.1**：支持 K 池挖矿，抽水 1.5%；PF 池也可以使用此版本，抽水 0%。
 
 ## 链接
