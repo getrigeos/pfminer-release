@@ -30,4 +30,5 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 
 - PF Pool: [pearlfortune.org](https://pearlfortune.org/)
 - Official miner repository: [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner)
-- Flight sheets (HiveOS; open one and copy the JSON to import): [PF Pool](./flightsheets/pfminer-pf-pool.json) · [K Pool](./flightsheets/pfminer-k-pool.json)
+- Flight sheets (HiveOS; open one and copy the JSON to import):
+  - PRL flight sheets: [PF Pool](./flightsheets/PRL/pfminer-pf-pool.json) · [K Pool](./flightsheets/PRL/pfminer-k-pool.json)

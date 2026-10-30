@@ -30,4 +30,5 @@ pfminer 是 PF 池（[pearlfortune.org](https://pearlfortune.org/)）官方 mine
 
 - PF 池：[pearlfortune.org](https://pearlfortune.org/)
 - 正式版 miner 仓库：[pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner)
-- 飞行表（HiveOS，点击打开后复制 JSON 导入）：[PF 池](./flightsheets/pfminer-pf-pool.json) · [K 池](./flightsheets/pfminer-k-pool.json)
+- 飞行表（HiveOS，点击打开后复制 JSON 导入）：
+  - PRL 飞行表：[PF 池](./flightsheets/PRL/pfminer-pf-pool.json) · [K 池](./flightsheets/PRL/pfminer-k-pool.json)
