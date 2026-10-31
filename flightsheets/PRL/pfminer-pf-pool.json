@@ -12,7 +12,7 @@
                 "url": "global.pearlfortune.org:443",
                 "miner": "pfminer",
                 "template": "%WAL%",
-                "install_url": "https://github.com/getrigeos/pfminer-release/releases/download/v2.3.7.1/pfminer-2.3.7.1.tar.gz",
+                "install_url": "https://github.com/getrigeos/pfminer-release/releases/download/v2.3.7.2/pfminer-2.3.7.2.tar.gz",
                 "user_config": ""
             },
             "pool_geo": []
