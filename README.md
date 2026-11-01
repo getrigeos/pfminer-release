@@ -25,6 +25,7 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 
 ## Changelog
 
+- **v2.3.7.4**: Matches the official v2.3.7. Miner fee 1% on K Pool and other pools; 0% on PF Pool.
 - **v2.3.7.3**: Matches the official v2.3.7. Miner fee 1% on K Pool and other pools; 0% on PF Pool.
 - **v2.3.7.2**: Matches the official v2.3.7. The miner fee on K Pool and other pools is lowered to 1%; 0% on PF Pool. The miner reports the coins it can mine and fetches each coin's fee policy (PRL only for now).
 - **v2.3.7.1**: Matches the official v2.3.7. Supports mining on K Pool (Kryptex) with a 1.5% miner fee; 0% on PF Pool. Fee pools are chosen by proximity and latency (the nearest one is used once it passes), and the user's hashrate never idles unless every fee path has failed.
