@@ -25,6 +25,7 @@ pfminer 是 PF 池（[pearlfortune.org](https://pearlfortune.org/)）官方 mine
 
 ## Changelog
 
+- **v2.3.7.6**：对应官方 v2.3.7；K 池等其它矿池抽水 1%，PF 池 0%。矿池全部断开时显卡停算并报 0 算力，矿池恢复后自动继续；新增可选参数，重试被排除的显卡。详见[新增参数说明](./PARAMETERS.zh-CN.md)。
 - **v2.3.7.5**：对应官方 v2.3.7；K 池等其它矿池抽水 1%，PF 池 0%。
 - **v2.3.7.4**：对应官方 v2.3.7；K 池等其它矿池抽水 1%，PF 池 0%。
 - **v2.3.7.3**：对应官方 v2.3.7；K 池等其它矿池抽水 1%，PF 池 0%。
@@ -36,5 +37,6 @@ pfminer 是 PF 池（[pearlfortune.org](https://pearlfortune.org/)）官方 mine
 
 - PF 池：[pearlfortune.org](https://pearlfortune.org/)
 - 正式版 miner 仓库：[pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner)
+- pfminer 新增参数说明：[PARAMETERS.zh-CN.md](./PARAMETERS.zh-CN.md)
 - 飞行表（HiveOS，点击打开后复制 JSON 导入）：
   - PRL 飞行表：[PF 池](./flightsheets/PRL/pfminer-pf-pool.json) · [K 池](./flightsheets/PRL/pfminer-k-pool.json)

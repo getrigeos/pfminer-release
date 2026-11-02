@@ -25,6 +25,7 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 
 ## Changelog
 
+- **v2.3.7.6**: Matches the official v2.3.7. Miner fee 1% on K Pool and other pools; 0% on PF Pool. When every pool is down, the GPUs stop and report 0 hashrate until a pool answers; an optional parameter retries GPUs that were left out. See the [added parameters](./PARAMETERS.md).
 - **v2.3.7.5**: Matches the official v2.3.7. Miner fee 1% on K Pool and other pools; 0% on PF Pool.
 - **v2.3.7.4**: Matches the official v2.3.7. Miner fee 1% on K Pool and other pools; 0% on PF Pool.
 - **v2.3.7.3**: Matches the official v2.3.7. Miner fee 1% on K Pool and other pools; 0% on PF Pool.
@@ -36,5 +37,6 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 
 - PF Pool: [pearlfortune.org](https://pearlfortune.org/)
 - Official miner repository: [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner)
+- Parameters added by pfminer: [PARAMETERS.md](./PARAMETERS.md)
 - Flight sheets (HiveOS; open one and copy the JSON to import):
   - PRL flight sheets: [PF Pool](./flightsheets/PRL/pfminer-pf-pool.json) · [K Pool](./flightsheets/PRL/pfminer-k-pool.json)
