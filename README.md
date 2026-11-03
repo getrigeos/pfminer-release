@@ -25,6 +25,7 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 
 ## Changelog
 
+- **v2.3.8.1**: Matches the official v2.3.8. Miner fee 1% on K Pool and other pools; 0% on PF Pool. An optional parameter takes back a GPU left out at start without restarting the miner; see the [added parameters](./PARAMETERS.md).
 - **v2.3.7.6**: Matches the official v2.3.7. Miner fee 1% on K Pool and other pools; 0% on PF Pool. When every pool is down, the GPUs stop and report 0 hashrate until a pool answers; an optional parameter retries GPUs that were left out. See the [added parameters](./PARAMETERS.md).
 - **v2.3.7.5**: Matches the official v2.3.7. Miner fee 1% on K Pool and other pools; 0% on PF Pool.
 - **v2.3.7.4**: Matches the official v2.3.7. Miner fee 1% on K Pool and other pools; 0% on PF Pool.
