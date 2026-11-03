@@ -2,7 +2,7 @@
 
 [English](./PARAMETERS.md) | [简体中文](./PARAMETERS.zh-CN.md)
 
-The command-line parameters pfminer **adds** to the official release [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.3.8, as of **v2.3.8.1**. For the official parameters see `pfminer --help`.
+The command-line parameters pfminer **adds** to the official release [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.3.8, as of **v2.3.8.2**. For the official parameters see `pfminer --help`.
 
 ## Conventions
 
@@ -16,9 +16,10 @@ The command-line parameters pfminer **adds** to the official release [pearlfortu
 | --- | --- | --- | --- |
 | `--gpu-retry-excluded <DUR>` | off | yes | A GPU the driver sees healthy but that is not mining is tried again by a miner restart after this long (since v2.3.7.6) |
 | `--gpu-retry-excluded-max <N>` | `4` | yes | Retries of one GPU a day, 1–24 (since v2.3.7.6) |
-| `--gpu-readmit-excluded <DUR>` | off | yes | A GPU left out at start because the miner before stopped on it is tried again after this long, without a miner restart (since v2.3.8.1) |
-| `--gpu-readmit-excluded-max <N>` | `4` | yes | Readmissions of one GPU a day, 1–24 (since v2.3.8.1) |
+| `--gpu-readmit-excluded [DUR]` | off (`1h` when given without a value) | yes | A GPU left out at start because the miner before stopped on it is tried again without a miner restart, two readmissions of a GPU at least this far apart (since v2.3.8.1; this meaning since v2.3.8.2) |
 | `--gpu-fault-restart <auto\|never>` | `auto` | yes | Whether a GPU that keeps failing while the others mine may restart the miner |
+
+v2.3.8.1's `--gpu-readmit-excluded-max` is gone since v2.3.8.2: a flight sheet that still passes it starts, with a warning.
 | `--failover-after-secs <N>` | `60` | no (config file: `[network] failover_after`) | With several pools: how long the current pool may stay down before the next one |
 | `--initial-connect-splay-secs <N>` | `3` | no (config file: `[network] initial_connect_splay`) | Random wait before the first connection, so a whole farm does not connect at once |
 | `--no-telemetry` | off (reports on) | no | No usage report; only an anonymous heartbeat remains |
@@ -55,9 +56,20 @@ A random wait of 0 to `<N>` seconds before the first connection, so a whole farm
 
 A GPU keeps failing while the others mine:
 
-- `auto`: if the driver still sees the GPU healthy, the miner restarts to try it again, at most once per GPU per hour. If it fails again within the hour after that restart, it is set aside instead and the other GPUs go on mining.
+- `auto`: if the driver still sees the GPU healthy, the miner restarts to try it again, at most once per GPU per hour; a GPU that restarts do not bring back, 3 times in a row, is left out until the rig reboots and the other GPUs go on mining (see below).
 - `never`: the GPU is only set aside; the miner is never restarted for it.
 - A GPU the driver says needs a reset is set aside either way. A miner restart cannot bring it back; the rig needs a reboot.
+
+### When one GPU keeps failing (not a parameter, since v2.3.8.2)
+
+A GPU fault or hang stops the miner, which restarts (on a 40HX such an error leaves every GPU of the process unusable until a restart). The next start leaves that GPU out; the others mine.
+
+- **A GPU that a restart brings back keeps its chances**: once it does work again after a restart or readmission it has recovered, its count starts again, and it may go on being retried. One GPU restarts the miner at most once an hour (the `--gpu-readmit-excluded` interval when given); when it needs one sooner, it is only left out until the hour is up, then the miner restarts for it.
+- **A GPU that a restart does not bring back is left to the system**: when the same GPU fails **3 times in a row**, each time before it did any work after the restart or readmission, the miner stops trying it: it stays out until the rig reboots, left to the rig manager or the operator. The other GPUs mine on.
+- Only a reboot clears this (a GPU reset does not). The record lives in memory (`/dev/shm`), by GPU UUID and boot: a diskless image never carries it to another rig.
+- When the record cannot be written (neither `/dev/shm` nor the temp directory takes it), the miner does not restart for that GPU: it only leaves it out, and the other GPUs mine on.
+- v2.3.8.1 and earlier allowed at most 3 restarts an hour for GPU faults and then waited for the next hour, possibly with every GPU idle; that is gone since v2.3.8.2.
+- Log events: `gpu.card_strike` (a failure counted), `gpu.card_recovered` (it did work, count cleared), `gpu.card_left_to_system` (left to the system), `device.left_to_system` (left out at start).
 
 ### `--gpu-retry-excluded <DUR>` and `--gpu-retry-excluded-max <N>` (since v2.3.7.6, off by default)
 
@@ -68,6 +80,7 @@ Without this parameter nothing changes. With it:
 - A GPU the driver sees healthy but that is not mining, out for `<DUR>`: the miner exits with code 76, the rig manager starts it again, and the start tries that GPU.
 - Each further retry of the same GPU within a day doubles the wait: `<DUR>`, 2×, 4×, and so on. At most `--gpu-retry-excluded-max` retries a day (default 4, range 1–24). The count is kept across miner restarts.
 - No retry, logged as `gpu.retry_not_taken` with the reason, for:
+  - a GPU left to the system (3 times in a row not brought back by a restart, see above);
   - a GPU the driver says needs a reset;
   - a GPU whose state is unknown;
   - a GPU whose PCI address cannot be read.
@@ -81,22 +94,22 @@ Without this parameter nothing changes. With it:
 
 `<DUR>` is at least `30m`: every restart costs every GPU its current work. A GPU that has dropped off the PCI bus, or that needs a reset, cannot be brought back by a miner restart; it needs a reboot or a look on site.
 
-### `--gpu-readmit-excluded <DUR>` and `--gpu-readmit-excluded-max <N>` (since v2.3.8.1, off by default)
+### `--gpu-readmit-excluded [DUR]` (since v2.3.8.1, off by default)
 
 When the miner stops because of a GPU fault or hang, the next start leaves that GPU out, so it cannot stop the miner again straight away. The others mine; the GPU waits for the start after, which a miner that keeps running never makes.
 
 Without this parameter nothing changes. With it, such a GPU is taken back by the running miner, without a restart:
 
-- At start it sits out for `<DUR>`, untouched; the other GPUs mine.
-- Then the miner tries it. If it works, it mines again; the other GPUs never stop.
+- The first readmission is immediate: the miner tries the GPU right after start. If it works, it mines again; the other GPUs never stop.
 - If it fails again, the miner stops as before and the next start leaves it out again.
-- Each further readmission of the same GPU within a day doubles the wait: `<DUR>`, 2×, 4×, and so on. At most `--gpu-readmit-excluded-max` a day (default 4, range 1–24). The count is kept across miner restarts.
+- Two readmissions of the same GPU are at least `<DUR>` apart (1 hour when `--gpu-readmit-excluded` is given without a value; 10 minutes to 24 hours), counted from the last readmission, not from the failure. For example, readmitted at 10:00 and failed at 10:05: the next readmission is at 11:00, the GPU sitting out meanwhile while the others mine. The interval does not double; readmissions are kept across miner restarts.
+- A readmitted GPU that does work has recovered and goes on being readmitted at the interval; one that fails before doing any work counts a failure in a row, and after 3 it is readmitted no more and left to the system, see "When one GPU keeps failing".
 - A GPU the driver says needs a reset, or whose state is unknown, is not readmitted.
 - Log events: `device.readmit_scheduled` (a readmission planned), `gpu.readmitted` (the GPU mines again), `gpu.readmit_not_taken` (not readmitted, with the reason).
 
 ```sh
---gpu-readmit-excluded 30m                                # take a left-out GPU back after 30 minutes, at most 4 a day
---gpu-readmit-excluded 1h --gpu-readmit-excluded-max 2    # after 1 hour, at most 2 a day
+--gpu-readmit-excluded                                    # take a left-out GPU back at once, readmissions at least 1 hour apart
+--gpu-readmit-excluded 30m                                # readmissions at least 30 minutes apart
 ```
 
 `<DUR>` is at least `10m`. Unlike `--gpu-retry-excluded`, a readmission that works costs the other GPUs nothing; one that fails costs them a miner restart, as the fault itself would.
