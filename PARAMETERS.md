@@ -2,7 +2,7 @@
 
 [English](./PARAMETERS.md) | [简体中文](./PARAMETERS.zh-CN.md)
 
-The command-line parameters pfminer **adds** to the official release [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.3.7, as of **v2.3.7.6**. For the official parameters see `pfminer --help`.
+The command-line parameters pfminer **adds** to the official release [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.3.8, as of **v2.3.8.1**. For the official parameters see `pfminer --help`.
 
 ## Conventions
 
@@ -14,9 +14,10 @@ The command-line parameters pfminer **adds** to the official release [pearlfortu
 
 | Parameter | Default | Works with `--config` | Purpose |
 | --- | --- | --- | --- |
-| `--pool-outage-pause <DUR\|off>` | `60s` | yes | Every pool down this long: the GPUs stop and report 0 until a pool answers (since v2.3.7.6) |
 | `--gpu-retry-excluded <DUR>` | off | yes | A GPU the driver sees healthy but that is not mining is tried again by a miner restart after this long (since v2.3.7.6) |
 | `--gpu-retry-excluded-max <N>` | `4` | yes | Retries of one GPU a day, 1–24 (since v2.3.7.6) |
+| `--gpu-readmit-excluded <DUR>` | off | yes | A GPU left out at start because the miner before stopped on it is tried again after this long, without a miner restart (since v2.3.8.1) |
+| `--gpu-readmit-excluded-max <N>` | `4` | yes | Readmissions of one GPU a day, 1–24 (since v2.3.8.1) |
 | `--gpu-fault-restart <auto\|never>` | `auto` | yes | Whether a GPU that keeps failing while the others mine may restart the miner |
 | `--failover-after-secs <N>` | `60` | no (config file: `[network] failover_after`) | With several pools: how long the current pool may stay down before the next one |
 | `--initial-connect-splay-secs <N>` | `3` | no (config file: `[network] initial_connect_splay`) | Random wait before the first connection, so a whole farm does not connect at once |
@@ -29,21 +30,14 @@ The command-line parameters pfminer **adds** to the official release [pearlfortu
 
 ## Pools
 
-### `--pool-outage-pause <DUR|off>` (since v2.3.7.6, default 60s)
+### When every pool is down (not a parameter)
 
-With every pool unreachable, older versions kept the GPUs computing the last job. That work could never be submitted, yet the rig manager went on showing the full hashrate, so a rig that was not mining looked fine.
+With every pool unreachable, v2.3.7.5 and older kept the GPUs computing the last job. That work could never be submitted, yet the rig manager went on showing the full hashrate.
 
-- Every pool down longer than `<DUR>`: the GPUs stop. Their contexts are kept, so mining resumes at once when a pool returns.
-- The hashrate reads 0 at once, the total and every GPU, and the progress lines carry `state=waiting_for_pool`. HiveOS and other rig managers see 0, so their low-hashrate handling works.
-- No GPU is taken for faulty while waiting, and the miner is not restarted for it.
-- A pool answers: the GPUs resume. The hashrate is back to full within about a minute, as it is measured over the last minute.
-- Log events: `user_pool.outage_pause` (waiting), `user_pool.outage_resume` (resumed).
-- `off`: the old behaviour, computing the last job while the pools are down.
-
-```sh
---pool-outage-pause 2m        # stop after 2 minutes without a pool
---pool-outage-pause=off       # off: the old behaviour
-```
+- Since v2.3.8.1 (as in the official v2.3.8), once the pool has sent nothing for 2 minutes, the GPUs stop. Their contexts are kept, and the pool's next job resumes mining at once.
+- While stopped, the hashrate reads 0, the total and every GPU, so the rig manager's low-hashrate handling works. No GPU is taken for faulty meanwhile.
+- The wait is the config file's `[network] offline_mining_grace` (default `"120s"`; `"0s"` stops as soon as the connection ends). v2.3.7.6 had a `--pool-outage-pause` parameter for this (default 60 s); it is gone since v2.3.8.1.
+- Log events: `mining.paused`, `mining.resumed`.
 
 Also since v2.3.7.6: when no progress line has been written for 20 seconds, the miner writes one with the current hashrate, 0 for a GPU that is not computing. The stats scripts' latest line is therefore always the current hashrate, never the last one before a hang.
 
@@ -86,6 +80,26 @@ Without this parameter nothing changes. With it:
 ```
 
 `<DUR>` is at least `30m`: every restart costs every GPU its current work. A GPU that has dropped off the PCI bus, or that needs a reset, cannot be brought back by a miner restart; it needs a reboot or a look on site.
+
+### `--gpu-readmit-excluded <DUR>` and `--gpu-readmit-excluded-max <N>` (since v2.3.8.1, off by default)
+
+When the miner stops because of a GPU fault or hang, the next start leaves that GPU out, so it cannot stop the miner again straight away. The others mine; the GPU waits for the start after, which a miner that keeps running never makes.
+
+Without this parameter nothing changes. With it, such a GPU is taken back by the running miner, without a restart:
+
+- At start it sits out for `<DUR>`, untouched; the other GPUs mine.
+- Then the miner tries it. If it works, it mines again; the other GPUs never stop.
+- If it fails again, the miner stops as before and the next start leaves it out again.
+- Each further readmission of the same GPU within a day doubles the wait: `<DUR>`, 2×, 4×, and so on. At most `--gpu-readmit-excluded-max` a day (default 4, range 1–24). The count is kept across miner restarts.
+- A GPU the driver says needs a reset, or whose state is unknown, is not readmitted.
+- Log events: `device.readmit_scheduled` (a readmission planned), `gpu.readmitted` (the GPU mines again), `gpu.readmit_not_taken` (not readmitted, with the reason).
+
+```sh
+--gpu-readmit-excluded 30m                                # take a left-out GPU back after 30 minutes, at most 4 a day
+--gpu-readmit-excluded 1h --gpu-readmit-excluded-max 2    # after 1 hour, at most 2 a day
+```
+
+`<DUR>` is at least `10m`. Unlike `--gpu-retry-excluded`, a readmission that works costs the other GPUs nothing; one that fails costs them a miner restart, as the fault itself would.
 
 ## Telemetry
 

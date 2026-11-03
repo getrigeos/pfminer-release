@@ -2,7 +2,7 @@
 
 [English](./PARAMETERS.md) | [简体中文](./PARAMETERS.zh-CN.md)
 
-本文列出 pfminer 相对官方正式版 [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.3.7 **新增**的命令行参数，截至 **v2.3.7.6**。官方原有参数的用法以 `pfminer --help` 为准。
+本文列出 pfminer 相对官方正式版 [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.3.8 **新增**的命令行参数，截至 **v2.3.8.1**。官方原有参数的用法以 `pfminer --help` 为准。
 
 ## 约定
 
@@ -14,9 +14,10 @@
 
 | 参数 | 默认 | 可与 `--config` 同用 | 作用 |
 | --- | --- | --- | --- |
-| `--pool-outage-pause <DUR\|off>` | `60s` | 是 | 矿池全部断开超过这段时间后，显卡停算并报 0 算力，矿池恢复后自动继续（v2.3.7.6 起） |
 | `--gpu-retry-excluded <DUR>` | 关闭 | 是 | 驱动报正常、但没在挖的卡，排除满这段时间后重启 miner 再试一次（v2.3.7.6 起） |
 | `--gpu-retry-excluded-max <N>` | `4` | 是 | 同一张卡每天最多重试几次，1–24（v2.3.7.6 起） |
+| `--gpu-readmit-excluded <DUR>` | 关闭 | 是 | 上次 miner 因某张卡出错或卡住而停止、这次启动时被排除的卡，过这段时间后不重启 miner 直接接回再试（v2.3.8.1 起） |
+| `--gpu-readmit-excluded-max <N>` | `4` | 是 | 同一张卡每天最多接回几次，1–24（v2.3.8.1 起） |
 | `--gpu-fault-restart <auto\|never>` | `auto` | 是 | 一张卡反复出错、其它卡还在挖时，是否为它重启 miner |
 | `--failover-after-secs <N>` | `60` | 否（配置文件：`[network] failover_after`） | 配了多个矿池时，当前矿池最多断多久后切到下一个 |
 | `--initial-connect-splay-secs <N>` | `3` | 否（配置文件：`[network] initial_connect_splay`） | 首次连接前随机等待的上限，避免整个矿场同时连矿池 |
@@ -29,21 +30,14 @@
 
 ## 矿池
 
-### `--pool-outage-pause <DUR|off>`（v2.3.7.6 起，默认 60s）
+### 矿池全部断开时（不是参数）
 
-矿池全部连不上时，旧版显卡还会继续算最后一个任务。这些算力交不出去，矿机管理系统却照样显示满算力，看不出矿机其实没在挖。
+矿池全部连不上时，v2.3.7.5 及更早的版本显卡还会继续算最后一个任务。这些算力交不出去，矿机管理系统却照样显示满算力。
 
-- 所有矿池都断开超过 `<DUR>` 后，显卡停止计算。显卡上下文保留，矿池一回来就能马上续上。
-- 停算后算力立即报 0（总算力和每张卡都是 0），日志进度行带 `state=waiting_for_pool`。HiveOS 等矿机管理系统看到的是 0，按低算力处理的设置能正常起作用。
-- 等待期间不会把任何卡当成故障，也不会为此重启 miner。
-- 任一矿池恢复应答后，显卡立即恢复计算。算力在约 1 分钟内回到满值，因为算力按最近 1 分钟统计。
-- 日志：`user_pool.outage_pause`（开始等待）、`user_pool.outage_resume`（恢复）。
-- `off`：保持旧行为，断开时继续算最后一个任务。
-
-```sh
---pool-outage-pause 2m        # 断开 2 分钟后停算
---pool-outage-pause=off       # 关闭，保持旧行为
-```
+- 从 v2.3.8.1 起（与官方 v2.3.8 相同），矿池 2 分钟没有任何消息后，显卡停止计算。显卡上下文保留，矿池发来新任务就立即恢复。
+- 停算期间算力报 0（总算力和每张卡都是 0），矿机管理系统按低算力处理的设置能正常起作用。等待期间不会把任何卡当成故障。
+- 等多久由配置文件的 `[network] offline_mining_grace` 决定（默认 `"120s"`；`"0s"` 表示连接一断就停）。v2.3.7.6 曾用参数 `--pool-outage-pause` 做这件事（默认 60 秒），v2.3.8.1 起已删除。
+- 日志：`mining.paused`、`mining.resumed`。
 
 另外，从 v2.3.7.6 起，算力进度行超过 20 秒没有输出时，miner 会自己补一条当前算力，没在算的卡报 0。所以统计脚本读到的最新一行永远是当前算力，不会一直停在卡住之前的数值上。
 
@@ -86,6 +80,26 @@
 ```
 
 `<DUR>` 不能小于 `30m`：每次重启都会让所有卡停下当前的工作，间隔太短得不偿失。从 PCI 总线上消失的卡、驱动报需要复位的卡，重启 miner 也救不回来，只能整机重启或现场处理。
+
+### `--gpu-readmit-excluded <DUR>` 和 `--gpu-readmit-excluded-max <N>`（v2.3.8.1 起，默认关闭）
+
+miner 因某张卡出错或卡住而停止后，下次启动会先把这张卡排除，免得它马上又让 miner 停下。其它卡照常挖，这张卡要等再下一次启动才会再试；miner 一直运行，就一直不会再试。
+
+不加这个参数时，软件行为完全不变。加上之后，这类卡由正在运行的 miner 直接接回，不用重启：
+
+- 启动时这张卡先闲置 `<DUR>`，期间不碰它，其它卡照常挖。
+- 时间到了 miner 再试这张卡。正常就继续挖，其它卡全程不停。
+- 又出错的话，miner 照旧停止，下次启动时再排除它。
+- 同一张卡一天内每多接回一次，下一次的等待时间就翻倍：`<DUR>`、2 倍、4 倍……每天最多接回 `--gpu-readmit-excluded-max` 次（默认 4，范围 1–24）。次数会保存下来，miner 重启后仍然记得。
+- 驱动报需要复位、或状态未知的卡不接回。
+- 日志：`device.readmit_scheduled`（已安排接回）、`gpu.readmitted`（卡已恢复挖矿）、`gpu.readmit_not_taken`（不接回及原因）。
+
+```sh
+--gpu-readmit-excluded 30m                                # 排除的卡 30 分钟后接回，每天最多 4 次
+--gpu-readmit-excluded 1h --gpu-readmit-excluded-max 2    # 1 小时后接回，每天最多 2 次
+```
+
+`<DUR>` 不能小于 `10m`。和 `--gpu-retry-excluded` 不同，接回成功时其它卡完全不受影响；接回失败时其它卡要跟着 miner 重启一次，和那张卡本身出错的代价一样。
 
 ## 遥测
 
