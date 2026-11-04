@@ -18,6 +18,7 @@
 | `--gpu-retry-excluded-max <N>` | `4` | 是 | 同一张卡每天最多重试几次，1–24（v2.3.7.6 起） |
 | `--gpu-readmit-excluded [DUR]` | 关闭（只写参数不带值为 `1h`） | 是 | 上次 miner 因某张卡出错或卡住而停止、这次启动时被排除的卡，不重启 miner 直接接回再试；同一张卡两次接回至少间隔这么久（v2.3.8.1 起；v2.3.8.2 起改为此含义） |
 | `--gpu-fault-restart <auto\|never>` | `auto` | 是 | 一张卡反复出错、其它卡还在挖时，是否为它重启 miner |
+| `--gpu-hang-isolate <on\|off>` | `on` | 是 | 驱动报卡已锁死后卡住的显卡，排除到整机重启，其它卡继续挖；不再重启 miner（这种情况下重启也完成不了）（v2.3.8.3 起） |
 
 v2.3.8.1 的 `--gpu-readmit-excluded-max` 从 v2.3.8.2 起删除：飞行表里还带着它也能正常启动，只打一条警告。
 | `--failover-after-secs <N>` | `60` | 否（配置文件：`[network] failover_after`） | 配了多个矿池时，当前矿池最多断多久后切到下一个 |
@@ -70,6 +71,18 @@ v2.3.8.1 的 `--gpu-readmit-excluded-max` 从 v2.3.8.2 起删除：飞行表里�
 - 记录写不进去时（`/dev/shm` 和临时目录都不可写），miner 不会为这张卡重启，只把它排除，其它卡照常挖。
 - v2.3.8.1 及更早的版本是“每小时最多因显卡出错重启 3 次，用完后等下一个小时”，等待期间可能所有卡都停着，v2.3.8.2 起删除。
 - 日志：`gpu.card_strike`（计一次）、`gpu.card_recovered`（挖出算力，计数清零）、`gpu.card_left_to_system`（交给系统）、`device.left_to_system`（启动时排除）。
+
+### `--gpu-hang-isolate <on|off>`（v2.3.8.3 起，默认 on）
+
+一张卡的挖矿计算一分钟没有进展（卡死），miner 会停下重启。如果驱动已经把这张卡锁死，重启就完成不了：miner 退出时会一直卡在驱动里，矿机管理系统等它退出，也就不会启动新的 miner。实际遇到过一台机器（4 张 CMP 40HX）：一张卡的 GSP 不再响应（Xid 119），卡死期间另外 3 张卡一直满速在挖，之后却跟着空转，直到整机重启。
+
+- `on`：卡死期间驱动报了这张卡已锁死（Xid 79、119、120 或 154），并且还有别的卡在挖时，miner 不退出，把这张卡排除到整机重启，其它卡继续挖。Xid 还没到时，最多再等 15 秒。
+- 其它卡死照旧：重启 miner，下次启动先排除这张卡，加了 `--gpu-readmit-excluded` 的可以再接回。
+- 这样排除的卡不会再让 miner 重启，`--gpu-retry-excluded` 也不会为它重启：重启完成不了。只有整机重启能让它回来。
+- 之后 2 分钟内如果其它卡一批都没挖出来，就照旧重启 miner。
+- 之后停止或重启 miner 仍会卡到整机重启，和以前一样：miner 放不开这张卡。
+- `off`：所有卡死都重启 miner，与 v2.3.8.2 及以前相同。
+- 日志事件：`gpu.hung_card_isolated`（带这张卡的 PCI 地址和 Xid）；控制台显示这张卡已隔离，原因 `hung_needs_reboot`。
 
 ### `--gpu-retry-excluded <DUR>` 和 `--gpu-retry-excluded-max <N>`（v2.3.7.6 起，默认关闭）
 

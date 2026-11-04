@@ -18,6 +18,7 @@ The command-line parameters pfminer **adds** to the official release [pearlfortu
 | `--gpu-retry-excluded-max <N>` | `4` | yes | Retries of one GPU a day, 1–24 (since v2.3.7.6) |
 | `--gpu-readmit-excluded [DUR]` | off (`1h` when given without a value) | yes | A GPU left out at start because the miner before stopped on it is tried again without a miner restart, two readmissions of a GPU at least this far apart (since v2.3.8.1; this meaning since v2.3.8.2) |
 | `--gpu-fault-restart <auto\|never>` | `auto` | yes | Whether a GPU that keeps failing while the others mine may restart the miner |
+| `--gpu-hang-isolate <on\|off>` | `on` | yes | A GPU that hangs after the driver locked it up is set aside until the rig reboots while the others keep mining, instead of a miner restart that could not complete (since v2.3.8.3) |
 
 v2.3.8.1's `--gpu-readmit-excluded-max` is gone since v2.3.8.2: a flight sheet that still passes it starts, with a warning.
 | `--failover-after-secs <N>` | `60` | no (config file: `[network] failover_after`) | With several pools: how long the current pool may stay down before the next one |
@@ -70,6 +71,18 @@ A GPU fault or hang stops the miner, which restarts (on a 40HX such an error lea
 - When the record cannot be written (neither `/dev/shm` nor the temp directory takes it), the miner does not restart for that GPU: it only leaves it out, and the other GPUs mine on.
 - v2.3.8.1 and earlier allowed at most 3 restarts an hour for GPU faults and then waited for the next hour, possibly with every GPU idle; that is gone since v2.3.8.2.
 - Log events: `gpu.card_strike` (a failure counted), `gpu.card_recovered` (it did work, count cleared), `gpu.card_left_to_system` (left to the system), `device.left_to_system` (left out at start).
+
+### `--gpu-hang-isolate <on|off>` (since v2.3.8.3, on by default)
+
+A GPU whose mining work makes no progress for a minute (a hang) stops the miner, which restarts. When the driver has locked that GPU up, the restart cannot complete: the miner's exit waits in the driver for good, and the rig manager, waiting for it, starts no new miner. On one rig (4× CMP 40HX) the GPU's GSP stopped answering (Xid 119); the other 3 GPUs had mined at full rate through the hang, then sat idle until the rig rebooted.
+
+- `on`: when the driver reported that GPU locked up during the hang (Xid 79, 119, 120 or 154) and another GPU is mining, the miner does not exit. It sets that GPU aside until the rig reboots and the other GPUs keep mining. When the Xid has not come yet, the miner waits up to 15 seconds for it.
+- Any other hang works as before: the miner restarts, the next start leaves the GPU out, and `--gpu-readmit-excluded` can take it back.
+- A GPU set aside this way never restarts the miner, not even for `--gpu-retry-excluded`: a restart could not complete. Only a reboot of the rig brings it back.
+- Should no other GPU complete any work within 2 minutes after that, the miner restarts as before.
+- Stopping or restarting the miner after this waits until the rig reboots, as before: the miner cannot release that GPU.
+- `off`: every hang restarts the miner, as in v2.3.8.2 and earlier.
+- Log event: `gpu.hung_card_isolated` (with the GPU's PCI address and the Xid); the console shows the GPU as isolated, reason `hung_needs_reboot`.
 
 ### `--gpu-retry-excluded <DUR>` and `--gpu-retry-excluded-max <N>` (since v2.3.7.6, off by default)
 
