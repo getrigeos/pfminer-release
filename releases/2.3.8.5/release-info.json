@@ -1,0 +1,35 @@
+{
+  "schema": "rigeos-release-info-v1",
+  "product": "pfminer",
+  "version": "2.3.8.5",
+  "release_channel": "pre-release",
+  "release_date": "2026-11-06",
+  "release_url": "https://github.com/getrigeos/pfminer-release/releases/tag/v2.3.8.5",
+  "base_release": {
+    "repo": "pearlfortune/pearl-miner",
+    "version": "2.3.8"
+  },
+  "assets": {
+    "pfminer-2.3.8.5.tar.gz": {
+      "sha256": "dba8c83150c67812c98f99fc3eee1d875d20d16cb92f0465adb88678a71ece19",
+      "size": 75338057,
+      "url": "https://github.com/getrigeos/pfminer-release/releases/download/v2.3.8.5/pfminer-2.3.8.5.tar.gz"
+    }
+  },
+  "coins": [
+    "prl"
+  ],
+  "coin_since": {
+    "prl": "2.3.6.1"
+  },
+  "fee_ppm": {
+    "prl": {
+      "default": 10000,
+      "pf-pool": 0
+    }
+  },
+  "changelog": {
+    "zh": "对应官方 v2.3.8；K 池等其它矿池抽水 1%，PF 池 0%。日志写不动时（例如日志盘不再响应）不再拖住矿池重连，也不会让矿工退不出、无法被重启；没写完整的份额证明不再记到显卡头上。",
+    "en": "Matches the official v2.3.8. Miner fee 1% on K Pool and other pools; 0% on PF Pool. A stuck log (for example a log disk that stops responding) can no longer hold up pool reconnects or keep the miner from exiting and being restarted; a share proof that could not be written in full no longer counts against the GPU."
+  }
+}

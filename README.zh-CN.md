@@ -45,3 +45,6 @@ pfminer 是 PF 池（[pearlfortune.org](https://pearlfortune.org/)）官方 mine
 - pfminer 新增参数说明：[PARAMETERS.zh-CN.md](./PARAMETERS.zh-CN.md)
 - 飞行表（HiveOS，点击打开后复制 JSON 导入）：
   - PRL 飞行表：[PF 池](./flightsheets/PRL/pfminer-pf-pool.json) · [K 池](./flightsheets/PRL/pfminer-k-pool.json)
+- PRL 在 rigeos.ai（矿业导航站）：
+  - [生成飞行表](https://rigeos.ai/setup?coin=prl&miner=pfminer&src=pfminer-readme)：RigeOS / HiveOS / Linux，可选矿池和结算方式
+  - [收益与矿池费率对比](https://rigeos.ai/coins/prl?src=pfminer-readme)

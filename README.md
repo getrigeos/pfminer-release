@@ -45,3 +45,6 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 - Parameters added by pfminer: [PARAMETERS.md](./PARAMETERS.md)
 - Flight sheets (HiveOS; open one and copy the JSON to import):
   - PRL flight sheets: [PF Pool](./flightsheets/PRL/pfminer-pf-pool.json) · [K Pool](./flightsheets/PRL/pfminer-k-pool.json)
+- PRL on rigeos.ai (mining directory):
+  - [Flight sheet generator](https://rigeos.ai/setup?coin=prl&miner=pfminer&src=pfminer-readme): RigeOS / HiveOS / Linux; pick the pool and the payout mode
+  - [Profitability and pool fee comparison](https://rigeos.ai/coins/prl?src=pfminer-readme)
