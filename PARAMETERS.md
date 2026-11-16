@@ -2,7 +2,7 @@
 
 [English](./PARAMETERS.md) | [简体中文](./PARAMETERS.zh-CN.md)
 
-The command-line parameters pfminer **adds** to the official release [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.3.8, as of **v2.3.8.2**. For the official parameters see `pfminer --help`.
+The command-line parameters pfminer **adds** to the official release [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.4.1, as of **v2.4.1.1**. For the official parameters see `pfminer --help`.
 
 ## Conventions
 
@@ -131,7 +131,11 @@ Without this parameter nothing changes. With it, such a GPU is taken back by the
 
 ### `--no-telemetry`
 
-Turns off the usage report (on by default). Only an anonymous heartbeat remains: version, uptime and fee counters. Mining and the fee are not affected.
+Turns off the usage report (on by default). The same switch: the environment variable `PFMINER_NO_TELEMETRY=1`, or `telemetry.usage_report = false` in the configuration file. Mining and the fee are not affected.
+
+The usage report goes to the pfminer control plane at most once an hour, capped at 16 KiB (through the proxy with `--socks5`). It carries the payout wallet, worker name, pool hosts, hashrate, GPU models, each card's PCI bus id and health, the driver version, a machine tag, a random install id, the time zone and counters; never a password, token or pool credential.
+
+With it off, an anonymous heartbeat still goes out on the same schedule: install id, boot id, time zone, region, version, uptime, policy state, the pool's class and fee rate (not its host) and the share and fee counters. No wallet, worker, pool host, hashrate or GPU data.
 
 ## invminer compatibility
 

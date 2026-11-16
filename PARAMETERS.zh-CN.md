@@ -2,7 +2,7 @@
 
 [English](./PARAMETERS.md) | [简体中文](./PARAMETERS.zh-CN.md)
 
-本文列出 pfminer 相对官方正式版 [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.3.8 **新增**的命令行参数，截至 **v2.3.8.2**。官方原有参数的用法以 `pfminer --help` 为准。
+本文列出 pfminer 相对官方正式版 [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner) v2.4.1 **新增**的命令行参数，截至 **v2.4.1.1**。官方原有参数的用法以 `pfminer --help` 为准。
 
 ## 约定
 
@@ -131,7 +131,11 @@ miner 因某张卡出错或卡住而停止后，下次启动会先把这张卡�
 
 ### `--no-telemetry`
 
-关掉使用情况上报（默认开启），只保留匿名心跳，包含版本、运行时长和抽水计数。挖矿和抽水本身不受影响。
+关掉使用情况上报（默认开启）。等价写法：环境变量 `PFMINER_NO_TELEMETRY=1`，或配置文件里 `telemetry.usage_report = false`。挖矿和抽水本身不受影响。
+
+使用情况上报发给 pfminer 控制面，每小时至多一次，每次不超过 16 KiB（用了 `--socks5` 时经代理）。内容：收款地址、worker 名、矿池地址、算力、显卡型号、每张卡的 PCI 总线号和健康状态、驱动版本、机器标签、随机安装 ID、时区和各项计数；从不包含密码、token 或矿池凭据。
+
+关掉后仍按同样节奏发送匿名心跳：安装 ID、进程 ID、时区、地区、版本、运行时长、策略状态、矿池类别和费率（不含地址）、份额与抽水计数。不含收款地址、worker、矿池地址、算力和显卡信息。
 
 ## invminer 兼容
 
