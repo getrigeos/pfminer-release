@@ -1,0 +1,35 @@
+{
+  "schema": "rigeos-release-info-v1",
+  "product": "pfminer",
+  "version": "2.4.1.1",
+  "release_channel": "pre-release",
+  "release_date": "2026-11-16",
+  "release_url": "https://github.com/getrigeos/pfminer-release/releases/tag/v2.4.1.1",
+  "base_release": {
+    "repo": "pearlfortune/pearl-miner",
+    "version": "2.4.1"
+  },
+  "assets": {
+    "pfminer-2.4.1.1.tar.gz": {
+      "sha256": "776370daba1d649b431e8775a48c7c616fe1f053d08713ca78660a77bd8c654b",
+      "size": 21013126,
+      "url": "https://github.com/getrigeos/pfminer-release/releases/download/v2.4.1.1/pfminer-2.4.1.1.tar.gz"
+    }
+  },
+  "coins": [
+    "prl"
+  ],
+  "coin_since": {
+    "prl": "2.3.6.1"
+  },
+  "fee_ppm": {
+    "prl": {
+      "default": 10000,
+      "pf-pool": 0
+    }
+  },
+  "changelog": {
+    "zh": "对应官方 v2.4.1；保留 K 池支持、无盘恢复与逐卡抽水。PF 池固定 0%，其它池按当前签名策略为 1%；包含官方 30/40/50 系能效、显存锁频、GPU 编号和超频参数更新。",
+    "en": "Matches official v2.4.1, with K Pool support, diskless recovery and per-GPU fee scheduling. PF Pool is fixed at 0%; other pools use the current signed 1% policy. Includes the official 30/40/50-series efficiency, memory-clock, GPU-numbering and overclock-option updates."
+  }
+}

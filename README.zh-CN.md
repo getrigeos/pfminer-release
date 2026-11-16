@@ -25,6 +25,7 @@ pfminer 是 PF 池（[pearlfortune.org](https://pearlfortune.org/)）官方 mine
 
 ## Changelog
 
+- **v2.4.1.1**：对应官方 v2.4.1；保留 K 池支持、无盘恢复与逐卡抽水。PF 池固定 0%，其它池按当前签名策略为 1%；包含官方 30/40/50 系能效、显存锁频、GPU 编号和超频参数更新。
 - **v2.3.8.5**：对应官方 v2.3.8；K 池等其它矿池抽水 1%，PF 池 0%。日志写不动时（例如日志盘不再响应）不再拖住矿池重连，也不会让矿工退不出、无法被重启；没写完整的份额证明不再记到显卡头上。
 - **v2.3.8.4**：对应官方 v2.3.8；K 池等其它矿池抽水 1%，PF 池 0%。磁盘变成只读或写满时（例如无盘机丢了存储）继续挖矿：份额证明改在内存里处理，存储错误不再记到显卡头上，日志写不动也不会卡住挖矿。
 - **v2.3.8.3**：对应官方 v2.3.8；K 池等其它矿池抽水 1%，PF 池 0%。驱动报某张卡已锁死（例如 GSP 不再响应）后它卡住时，只把这张卡排除到整机重启，其它卡继续挖；以前随后的 miner 重启完成不了，所有卡一起空转。新增 `--gpu-hang-isolate`（默认开启）。详见[新增参数说明](./PARAMETERS.zh-CN.md)。
@@ -39,6 +40,9 @@ pfminer 是 PF 池（[pearlfortune.org](https://pearlfortune.org/)）官方 mine
 - **v2.3.6.1**：支持 K 池挖矿，抽水 1.5%；PF 池也可以使用此版本，抽水 0%。
 
 ## 链接
+
+- [pfminer-2.4.1.1.tar.gz (HTTPS / COS)](https://quantdesk-1256803747.cos.ap-chengdu.myqcloud.com/updates/pfminer/2.4.1.1/pfminer-2.4.1.1.tar.gz)
+- [GitHub Release](https://github.com/getrigeos/pfminer-release/releases/tag/v2.4.1.1)
 
 - PF 池：[pearlfortune.org](https://pearlfortune.org/)
 - 正式版 miner 仓库：[pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner)

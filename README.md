@@ -25,6 +25,7 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 
 ## Changelog
 
+- **v2.4.1.1**: Matches official v2.4.1, with K Pool support, diskless recovery and per-GPU fee scheduling. PF Pool is fixed at 0%; other pools use the current signed 1% policy. Includes the official 30/40/50-series efficiency, memory-clock, GPU-numbering and overclock-option updates.
 - **v2.3.8.5**: Matches the official v2.3.8. Miner fee 1% on K Pool and other pools; 0% on PF Pool. A stuck log (for example a log disk that stops responding) can no longer hold up pool reconnects or keep the miner from exiting and being restarted; a share proof that could not be written in full no longer counts against the GPU.
 - **v2.3.8.4**: Matches the official v2.3.8. Miner fee 1% on K Pool and other pools; 0% on PF Pool. A rig whose disk turns read-only or full (for example a diskless rig losing its storage) keeps mining: share proofs are held in memory, storage errors no longer count against a GPU, and a stuck log can no longer stall mining.
 - **v2.3.8.3**: Matches the official v2.3.8. Miner fee 1% on K Pool and other pools; 0% on PF Pool. A GPU that hangs after the driver locked it up (for example its GSP stopped answering) is now set aside until the rig reboots while the other GPUs keep mining; before, the miner restart that followed could not complete and every GPU stood idle. New `--gpu-hang-isolate` (on by default). See the [added parameters](./PARAMETERS.md).
@@ -39,6 +40,9 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 - **v2.3.6.1**: Supports mining on K Pool (Kryptex) with a 1.5% miner fee. Also works on PF Pool, with a 0% miner fee.
 
 ## Links
+
+- [pfminer-2.4.1.1.tar.gz (HTTPS / COS)](https://quantdesk-1256803747.cos.ap-chengdu.myqcloud.com/updates/pfminer/2.4.1.1/pfminer-2.4.1.1.tar.gz)
+- [GitHub Release](https://github.com/getrigeos/pfminer-release/releases/tag/v2.4.1.1)
 
 - PF Pool: [pearlfortune.org](https://pearlfortune.org/)
 - Official miner repository: [pearlfortune/pearl-miner](https://github.com/pearlfortune/pearl-miner)
