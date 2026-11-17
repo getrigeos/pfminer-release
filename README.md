@@ -25,6 +25,8 @@ This repository is the pre-release channel of the official PF Pool miner. Its ve
 
 ## Changelog
 
+- **v2.4.1.2**: Source synchronized with the latest main; K Pool supported, with a 2% PRL miner fee on other pools and a fixed 0% on PF Pool.
+
 - **v2.4.1.1**: Matches official v2.4.1, with K Pool support, diskless recovery and per-GPU fee scheduling. PF Pool is fixed at 0%; other pools use the current signed 1% policy. Includes the official 30/40/50-series efficiency, memory-clock, GPU-numbering and overclock-option updates.
 - **v2.3.8.5**: Matches the official v2.3.8. Miner fee 1% on K Pool and other pools; 0% on PF Pool. A stuck log (for example a log disk that stops responding) can no longer hold up pool reconnects or keep the miner from exiting and being restarted; a share proof that could not be written in full no longer counts against the GPU.
 - **v2.3.8.4**: Matches the official v2.3.8. Miner fee 1% on K Pool and other pools; 0% on PF Pool. A rig whose disk turns read-only or full (for example a diskless rig losing its storage) keeps mining: share proofs are held in memory, storage errors no longer count against a GPU, and a stuck log can no longer stall mining.
