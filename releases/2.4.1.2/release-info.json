@@ -1,0 +1,35 @@
+{
+  "schema": "rigeos-release-info-v1",
+  "product": "pfminer",
+  "version": "2.4.1.2",
+  "release_channel": "pre-release",
+  "release_date": "2026-11-17",
+  "release_url": "https://github.com/getrigeos/pfminer-release/releases/tag/v2.4.1.2",
+  "base_release": {
+    "repo": "pearlfortune/pearl-miner",
+    "version": "2.4.1"
+  },
+  "assets": {
+    "pfminer-2.4.1.2.tar.gz": {
+      "sha256": "7b40a45fb397193af420fd69d702b7369c84d4fa18df5ee702bfd785bbaa8b90",
+      "size": 21010619,
+      "url": "https://github.com/getrigeos/pfminer-release/releases/download/v2.4.1.2/pfminer-2.4.1.2.tar.gz"
+    }
+  },
+  "coins": [
+    "prl"
+  ],
+  "coin_since": {
+    "prl": "2.3.6.1"
+  },
+  "fee_ppm": {
+    "prl": {
+      "default": 20000,
+      "pf-pool": 0
+    }
+  },
+  "changelog": {
+    "zh": "源码与最新 main 保持一致；支持 K 池，PRL 其它池抽水 2%，PF 池固定 0%。",
+    "en": "Source synchronized with the latest main; K Pool supported, with a 2% PRL miner fee on other pools and a fixed 0% on PF Pool."
+  }
+}
